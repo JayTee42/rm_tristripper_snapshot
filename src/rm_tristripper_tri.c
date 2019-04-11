@@ -110,7 +110,7 @@ rm_void rm_tristripper_build_tris(const rm_tristripper_id* ids, rm_size ids_coun
 	for (rm_size i = 0; i < expected_tris_count; i++)
 	{
 		//Get the current triangle:
-		rm_tristripper_tri* tri = &result_tris[i];
+		rm_tristripper_tri* tri = &result_tris[result_tris_count];
 
 		//Start without any neighbours:
 		tri->neighbours[0] = null;
@@ -146,15 +146,15 @@ rm_void rm_tristripper_build_tris(const rm_tristripper_id* ids, rm_size ids_coun
 		};
 
 		//Iterate through the three edges:
-		for (rm_size i = 0; i < rm_array_count(edge_keys); i++)
+		for (rm_size j = 0; j < rm_array_count(edge_keys); j++)
 		{
-			rm_tristripper_edge_key curr_edge_key = edge_keys[i];
+			rm_tristripper_edge_key curr_edge_key = edge_keys[j];
 
 			//Create an open edge struct:
 			rm_tristripper_open_edge new_open_edge =
 			{
 				.tri = tri,
-				.edge_index = (rm_uint8)i
+				.edge_index = (rm_uint8)j
 			};
 
 			//Try to insert the open edge into the hashmap.
@@ -167,12 +167,12 @@ rm_void rm_tristripper_build_tris(const rm_tristripper_id* ids, rm_size ids_coun
 				rm_tristripper_tri* neighbour = old_open_edge.tri;
 
 				//Stich the two triangles together:
-				tri->neighbours[i] = neighbour;
-				tri->indices_at_neighbours[i] = old_open_edge.edge_index;
+				tri->neighbours[j] = neighbour;
+				tri->indices_at_neighbours[j] = old_open_edge.edge_index;
 				tri->unstripped_neighbours_count++;
 
 				neighbour->neighbours[(rm_size)old_open_edge.edge_index] = tri;
-				neighbour->indices_at_neighbours[(rm_size)old_open_edge.edge_index] = (rm_uint8)i;
+				neighbour->indices_at_neighbours[(rm_size)old_open_edge.edge_index] = (rm_uint8)j;
 				neighbour->unstripped_neighbours_count++;
 
 				//Remove the open edge from the hashmap.
